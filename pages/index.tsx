@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import { BiHash, BiHomeCircle, BiMoney, BiUser } from "react-icons/bi";
-import React from "react";
+import React, { useCallback } from "react";
 import FeedCard from "@/components/FeedCard";
 import { SlOptions } from "react-icons/sl";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 interface TwitterSideBarButton {
   title: string;
@@ -22,6 +23,8 @@ const sidebarButtons: TwitterSideBarButton[] = [
 ];
 
 export default function Home() {
+  const handleLoginWithGoogle = useCallback((cred: CredentialResponse) => {},
+  []);
   return (
     <div>
       <div className="grid grid-cols-12 h-screen w-screen px-56">
@@ -48,14 +51,19 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="col-span-6 border-r-[1px] border-l-[1px] border-gray-600 h-[100%] overflow-y-auto no-scrollbar">
+        <div className="col-span-5 border-r-[1px] border-l-[1px] border-gray-600 h-[100%] overflow-y-auto no-scrollbar">
           <FeedCard />
           <FeedCard />
           <FeedCard />
           <FeedCard />
           <FeedCard />
         </div>
-        <div className="col-span-3"></div>
+        <div className="col-span-4 p-3">
+          <div className="border bg-slate-700 p-5 rounded-lg">
+            <h1 className="my-2 text-2xl">New to Twitter</h1>
+            <GoogleLogin onSuccess={(creds) => handleLoginWithGoogle(creds)} />
+          </div>
+        </div>
       </div>
     </div>
   );

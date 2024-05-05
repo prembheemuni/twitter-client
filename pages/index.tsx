@@ -5,6 +5,10 @@ import React, { useCallback } from "react";
 import FeedCard from "@/components/FeedCard";
 import { SlOptions } from "react-icons/sl";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
+import { graphqlClient } from "@/clients/api";
+import { verifyUserGoogleTokenQuery } from "@/graphql/queries/user";
+import { setStorage } from "@/clients/storage";
 
 interface TwitterSideBarButton {
   title: string;
@@ -23,8 +27,22 @@ const sidebarButtons: TwitterSideBarButton[] = [
 ];
 
 export default function Home() {
-  const handleLoginWithGoogle = useCallback((cred: CredentialResponse) => {},
-  []);
+  const handleLoginWithGoogle = useCallback(
+    async (cred: CredentialResponse) => {
+      const googleToken = cred.credential;
+      if (!googleToken) return toast.error("Token not found");
+      const { verifyGoogleToken } = await graphqlClient.request(
+        verifyUserGoogleTokenQuery,
+        {
+          token: googleToken,
+        }
+      );
+
+      toast.success("Verified google token");
+      if (verifyGoogleToken) setStorage("__twitter_key", verifyGoogleToken);
+    },
+    []
+  );
   return (
     <div>
       <div className="grid grid-cols-12 h-screen w-screen px-56">
